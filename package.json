@@ -21,7 +21,7 @@
   "author": "Mehran Poursadeghi",
   "type": "module",
   "bin": {
-    "serve": "./build/main.js"
+    "serve-box": "./build/main.js"
   },
   "files": [
     "build/"
