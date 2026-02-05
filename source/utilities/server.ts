@@ -4,10 +4,10 @@
 import http from 'node:http';
 import https from 'node:https';
 import { readFile } from 'node:fs/promises';
-import handler from 'serve-handler';
 import compression from 'compression';
 import isPortReachable from 'is-port-reachable';
 import chalk from 'chalk';
+import { handler } from '../handler/index.js';
 import { getNetworkAddress, registerCloseListener } from './http.js';
 import { promisify } from './promise.js';
 import { logger } from './logger.js';
@@ -21,7 +21,6 @@ import type {
   ServerAddress,
 } from '../types.js';
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
 const compress = promisify(compression());
 
 /**
@@ -38,11 +37,29 @@ export const startServer = async (
   args: Partial<Options>,
   previous?: Port,
 ): Promise<ServerAddress> => {
+  // Parse auth credentials if provided.
+  const authCredentials = args['--auth'];
+  let expectedAuth: string | undefined;
+  if (authCredentials) {
+    expectedAuth = `Basic ${Buffer.from(authCredentials).toString('base64')}`;
+  }
+
   // Define the request handler for the server.
   const serverHandler = (
     request: IncomingMessage,
     response: ServerResponse,
   ): void => {
+    // Check HTTP Basic Auth if enabled.
+    if (expectedAuth) {
+      const authHeader = request.headers.authorization;
+      if (!authHeader || authHeader !== expectedAuth) {
+        response.statusCode = 401;
+        response.setHeader('WWW-Authenticate', 'Basic realm="Protected"');
+        response.end('Unauthorized');
+        return;
+      }
+    }
+
     // We can't return a promise in a HTTP request handler, so we run our code
     // inside an async function instead.
     const run = async () => {

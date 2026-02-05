@@ -66,6 +66,9 @@ const helpText = chalkTemplate`
 
     --no-port-switching                 Do not open a port other than the one specified when it\'s taken.
 
+    -a, --auth {underline credentials}           Enable HTTP Basic Auth with username:password
+                                        {grey Example: --auth admin:secret}
+
   {bold ENDPOINTS}
 
     Listen endpoints (specified by the {bold --listen} or {bold -l} options above) instruct {cyan serve}
@@ -160,6 +163,7 @@ const options = {
   '--ssl-key': String,
   '--ssl-pass': String,
   '--no-request-logging': Boolean,
+  '--auth': String,
   // A list of aliases for the above options.
   '-h': '--help',
   '-v': '--version',
@@ -172,6 +176,7 @@ const options = {
   '-S': '--symlinks',
   '-C': '--cors',
   '-L': '--no-request-logging',
+  '-a': '--auth',
 
   // The `-p` option is deprecated and is kept only for backwards-compatibility.
   '-p': '--listen',

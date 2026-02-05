@@ -1,68 +1,55 @@
-![Serve Logo](https://raw.githubusercontent.com/vercel/serve/main/media/banner.png)
-
-<div align="center">
-  <a aria-label="Vercel logo" href="https://vercel.com">
-    <img src="https://img.shields.io/badge/made%20by-vercel-%23000000">
-  </a>
-  <br>
-  <a aria-label="Install Size" href="https://packagephobia.com/result?p=serve">
-    <img src="https://packagephobia.com/badge?p=serve">
-  </a>
-  <a aria-label="Stars" href="https://github.com/vercel/serve/stargazers">
-    <img src="https://img.shields.io/github/stars/vercel/serve">
-  </a>
-  <a aria-label="Build Status" href="https://github.com/vercel/serve/actions/workflows/ci.yaml">
-    <img src="https://github.com/vercel/serve/actions/workflows/ci.yaml/badge.svg">
-  </a>
-</div>
+![Serve-Box Logo](./media/banner.png)
 
 ---
 
-`serve` helps you serve a static site, single page application or just a static file (no matter if on your device or on the local network). It also provides a neat interface for listing the directory's contents:
+`serve-box` helps you serve a static site, single page application or just a static file (no matter if on your device or on the local network). It also supports **file uploads**, allowing users to upload files to the server. Additionally, it provides a neat interface for listing the directory's contents:
 
-![Listing UI](https://raw.githubusercontent.com/vercel/serve/main/media/listing-ui.png)
-
-> Once it's time to push your site to production, we recommend using [Vercel](https://vercel.com).
+![Listing UI](./media/listing-ui.png)
 
 ## Usage
 
-> `serve` v14 onwards requires Node v14 to run. Please use `serve` v13 if you cannot upgrade to Node v14.
-
-The quickest way to get started is to just run `npx serve` in your project's directory.
+The quickest way to get started is to just run `npx serve-box` in your project's directory.
 
 If you prefer, you can also install the package globally (you'll need at least [Node LTS](https://github.com/nodejs/Release#release-schedule)):
 
 ```bash
-> npm install --global serve
+> npm install --global serve-box
 ```
 
 Once that's done, you can run this command inside your project's directory...
 
 ```bash
-> serve
+> serve-box
 ```
 
 ...or specify which folder you want to serve:
 
 ```bash
-> serve folder-name/
+> serve-box folder-name/
 ```
 
 Finally, run this command to see a list of all available options:
 
 ```bash
-> serve --help
+> serve-box --help
 ```
 
 Now you understand how the package works! :tada:
 
+## Features
+
+- **Static file serving**: Serve any static site, SPA, or individual files
+- **File uploads**: Upload files directly to the server via the web interface
+- **Directory listing**: Browse directory contents with a clean UI
+- **Local network sharing**: Easily share files on your local network
+
 ## Configuration
 
-To customize `serve`'s behavior, create a `serve.json` file in the public folder and insert any of [these properties](https://github.com/vercel/serve-handler#options).
+To customize `serve-box`'s behavior, create a `serve.json` file in the public folder and insert any of [these properties](https://github.com/vercel/serve-handler#options).
 
 ## API
 
-The core of `serve` is [`serve-handler`](https://github.com/vercel/serve-handler), which can be used as middleware in existing HTTP servers:
+The core of `serve-box` is [`serve-handler`](https://github.com/vercel/serve-handler), which can be used as middleware in existing HTTP servers:
 
 ```js
 const handler = require('serve-handler');
@@ -89,8 +76,4 @@ If you wish to contribute to the project, please read the [contributing guide](c
 
 ## Credits
 
-This project used to be called `list` and `micro-list`. But thanks to [TJ Holowaychuk](https://github.com/tj) handing us the new name, it's now called `serve` (which is much more definite).
-
-## Author
-
-Leo Lamprecht ([@leo](https://x.com/leo))
+This project is a fork of [serve](https://github.com/vercel/serve) by Vercel, extended with file upload capabilities.
