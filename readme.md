@@ -46,30 +46,9 @@ Now you understand how the package works! :tada:
 
 To customize `serve-box`'s behavior, create a `serve.json` file in the public folder and insert any of [these properties](https://github.com/vercel/serve-handler#options).
 
-## API
-
-The core of `serve-box` is [`serve-handler`](https://github.com/vercel/serve-handler), which can be used as middleware in existing HTTP servers:
-
-```js
-const handler = require('serve-handler');
-const http = require('http');
-
-const server = http.createServer((request, response) => {
-  // You pass two more arguments for config and middleware
-  // More details here: https://github.com/vercel/serve-handler#options
-  return handler(request, response);
-});
-
-server.listen(3000, () => {
-  console.log('Running at http://localhost:3000');
-});
-```
-
-> You can also replace `http.createServer` with [`micro`](https://github.com/vercel/micro).
-
 ## Issues and Contributing
 
-If you want a feature to be added, or wish to report a bug, please open an issue [here](https://github.com/vercel/serve/issues/new).
+If you want a feature to be added, or wish to report a bug, please open an issue on its Github repository.
 
 If you wish to contribute to the project, please read the [contributing guide](contributing.md) first.
 
