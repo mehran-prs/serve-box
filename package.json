@@ -1,15 +1,24 @@
 {
-  "name": "serve",
-  "version": "14.2.5",
+  "name": "serve-box",
+  "version": "0.1.0",
   "description": "Static file serving and directory listing",
   "keywords": [
-    "vercel",
     "serve",
-    "micro",
-    "http-server"
+    "serve-box",
+    "static",
+    "http-server",
+    "file-server"
   ],
-  "repository": "vercel/serve",
+  "homepage": "https://github.com/mehran-prs/serve-box#readme",
+  "bugs": {
+    "url": "https://github.com/mehran-prs/serve-box/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mehran-prs/serve-box.git"
+  },
   "license": "MIT",
+  "author": "Mehran Poursadeghi",
   "type": "module",
   "bin": {
     "serve": "./build/main.js"
