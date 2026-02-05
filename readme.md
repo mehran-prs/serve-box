@@ -41,6 +41,7 @@ Now you understand how the package works! :tada:
 - **Directory listing**: Browse directory contents with a clean UI
 - **Local network sharing**: Easily share files on your local network
 - **Authentication**: Authenticate via HTTP basic authentication
+- **Shared Board**: A board to let all users share text on it.
 
 ## Configuration
 

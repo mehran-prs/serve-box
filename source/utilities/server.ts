@@ -9,7 +9,6 @@ import isPortReachable from 'is-port-reachable';
 import chalk from 'chalk';
 import { handler } from '../handler/index.js';
 import { getNetworkAddress, registerCloseListener } from './http.js';
-import { promisify } from './promise.js';
 import { logger } from './logger.js';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
@@ -21,7 +20,17 @@ import type {
   ServerAddress,
 } from '../types.js';
 
-const compress = promisify(compression());
+const compressionMiddleware = compression();
+const compress = (
+  request: Parameters<typeof compressionMiddleware>[0],
+  response: Parameters<typeof compressionMiddleware>[1],
+): Promise<void> =>
+  new Promise((resolve, reject) => {
+    void compressionMiddleware(request, response, (error?: Error) => {
+      if (error) reject(error);
+      else resolve();
+    });
+  });
 
 /**
  * Starts the server and makes it listen on the given endpoint.
@@ -63,9 +72,6 @@ export const startServer = async (
     // We can't return a promise in a HTTP request handler, so we run our code
     // inside an async function instead.
     const run = async () => {
-      type ExpressRequest = Parameters<typeof compress>[0];
-      type ExpressResponse = Parameters<typeof compress>[1];
-
       // Log the request.
       const requestTime = new Date();
       const formattedTime = `${requestTime.toLocaleDateString()} ${requestTime.toLocaleTimeString()}`;
@@ -85,8 +91,7 @@ export const startServer = async (
         response.setHeader('Access-Control-Allow-Credentials', 'true');
         response.setHeader('Access-Control-Allow-Private-Network', 'true');
       }
-      if (!args['--no-compression'])
-        await compress(request as ExpressRequest, response as ExpressResponse);
+      if (!args['--no-compression']) await compress(request, response);
 
       // Let the `serve-handler` module do the rest.
       await handler(request, response, config);
