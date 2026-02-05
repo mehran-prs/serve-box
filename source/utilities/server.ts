@@ -21,15 +21,21 @@ import type {
 } from '../types.js';
 
 const compressionMiddleware = compression();
+type CompressionRequest = Parameters<typeof compressionMiddleware>[0];
+type CompressionResponse = Parameters<typeof compressionMiddleware>[1];
 const compress = (
-  request: Parameters<typeof compressionMiddleware>[0],
-  response: Parameters<typeof compressionMiddleware>[1],
+  request: IncomingMessage,
+  response: ServerResponse,
 ): Promise<void> =>
   new Promise((resolve, reject) => {
-    void compressionMiddleware(request, response, (error?: Error) => {
-      if (error) reject(error);
-      else resolve();
-    });
+    void compressionMiddleware(
+      request as unknown as CompressionRequest,
+      response as unknown as CompressionResponse,
+      (error?: unknown) => {
+        if (error) reject(error);
+        else resolve();
+      },
+    );
   });
 
 /**
