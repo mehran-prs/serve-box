@@ -1,5 +1,11 @@
 # serve
 
+## 0.3.0
+
+### Minor Changes
+
+- 93bd12d: rename bin file name
+
 ## 0.2.0
 
 ### Minor Changes
