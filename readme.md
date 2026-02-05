@@ -1,6 +1,8 @@
 ### Serve Box
 
-`serve-box` helps you serve a static site, single page application or just a static file (no matter if on your device or on the local network). It also supports **file uploads**, allowing users to upload files to the server. Additionally, it provides a neat interface for listing the directory's contents:
+`serve-box` helps you share a folder over network. It also supports **file uploads**,
+allowing users to upload files to the server and a shared text board.
+Additionally, it provides a neat interface for listing the directory's contents:
 
 ![Listing UI](./media/listing-ui.png)
 
@@ -42,10 +44,6 @@ Now you understand how the package works! :tada:
 - **Local network sharing**: Easily share files on your local network
 - **Authentication**: Authenticate via HTTP basic authentication
 - **Shared Board**: A board to let all users share text on it.
-
-## Configuration
-
-To customize `serve-box`'s behavior, create a `serve.json` file in the public folder and insert any of [these properties](https://github.com/vercel/serve-handler#options).
 
 ## Issues and Contributing
 
