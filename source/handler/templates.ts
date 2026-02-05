@@ -102,9 +102,21 @@ export const directoryTemplate = (spec: DirectorySpec): string => {
     .upload-progress-bar { height: 100%; background: #0076FF; width: 0%; transition: width 0.1s; }
 
     /* QR code styles */
-    .qr-container { position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .qr-container { position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); cursor: pointer; transition: opacity 0.2s; }
+    .qr-container:hover { opacity: 0.9; }
+    .qr-container.hidden { display: none; }
     .qr-container canvas { display: block; }
     .qr-label { font-size: 10px; color: #666; text-align: center; margin-top: 5px; }
+    .qr-toggle { position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); cursor: pointer; font-size: 11px; color: #666; display: none; }
+    .qr-toggle:hover { background: #f5f5f5; }
+    .qr-toggle.visible { display: block; }
+
+    /* Shared board styles */
+    .shared-board { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
+    .shared-board h2 { font-size: 14px; font-weight: 500; margin: 0 0 10px 0; color: #333; }
+    .shared-board textarea { width: 100%; min-height: 120px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 13px; resize: vertical; box-sizing: border-box; }
+    .shared-board textarea:focus { outline: none; border-color: #0076FF; }
+    .shared-board-status { font-size: 11px; color: #666; margin-top: 5px; }
   </style>
 </head>
 <body>
@@ -119,11 +131,17 @@ export const directoryTemplate = (spec: DirectorySpec): string => {
       </div>
     </header>
     <ul>${fileItems}</ul>
+    <div class="shared-board">
+      <h2>📋 Shared Board</h2>
+      <textarea id="shared-board-text" placeholder="Type here to share text with everyone..."></textarea>
+      <div class="shared-board-status" id="shared-board-status"></div>
+    </div>
   </main>
-  <div class="qr-container">
+  <div class="qr-container" id="qr-container">
     <canvas id="qr-code"></canvas>
     <div class="qr-label">Scan to open</div>
   </div>
+  <div class="qr-toggle" id="qr-toggle">📱 QR</div>
   <script>
     const fileInput = document.getElementById('file-input');
     const uploadBtn = document.getElementById('upload-btn');
@@ -196,11 +214,85 @@ export const directoryTemplate = (spec: DirectorySpec): string => {
       xhr.send(formData);
     });
 
-    // QR Code generation (minimal inline implementation)
+    // Shared Board functionality
     (function() {
+      const boardText = document.getElementById('shared-board-text');
+      const boardStatus = document.getElementById('shared-board-status');
+      let saveTimeout = null;
+      let lastSavedContent = '';
+
+      const loadBoard = async () => {
+        try {
+          const res = await fetch('/__board');
+          const data = await res.json();
+          boardText.value = data.content || '';
+          lastSavedContent = boardText.value;
+        } catch (err) {
+          boardStatus.textContent = 'Failed to load board';
+        }
+      };
+
+      const saveBoard = async () => {
+        const content = boardText.value;
+        if (content === lastSavedContent) return;
+        
+        boardStatus.textContent = 'Saving...';
+        try {
+          const res = await fetch('/__board', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
+          });
+          if (res.ok) {
+            lastSavedContent = content;
+            boardStatus.textContent = 'Saved';
+            setTimeout(() => { if (boardStatus.textContent === 'Saved') boardStatus.textContent = ''; }, 2000);
+          } else {
+            boardStatus.textContent = 'Failed to save';
+          }
+        } catch (err) {
+          boardStatus.textContent = 'Failed to save';
+        }
+      };
+
+      boardText.addEventListener('input', () => {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(saveBoard, 500);
+      });
+
+      // Poll for updates from other users
+      setInterval(async () => {
+        if (document.activeElement === boardText) return;
+        try {
+          const res = await fetch('/__board');
+          const data = await res.json();
+          if (data.content !== lastSavedContent) {
+            boardText.value = data.content || '';
+            lastSavedContent = boardText.value;
+          }
+        } catch {}
+      }, 3000);
+
+      loadBoard();
+    })();
+
+    // QR Code generation and toggle
+    (function() {
+      const qrContainer = document.getElementById('qr-container');
+      const qrToggle = document.getElementById('qr-toggle');
       const canvas = document.getElementById('qr-code');
       const url = window.location.href;
       const size = 100;
+
+      qrContainer.addEventListener('click', () => {
+        qrContainer.classList.add('hidden');
+        qrToggle.classList.add('visible');
+      });
+
+      qrToggle.addEventListener('click', () => {
+        qrToggle.classList.remove('visible');
+        qrContainer.classList.remove('hidden');
+      });
       
       // Load qrcode-generator from CDN
       const script = document.createElement('script');

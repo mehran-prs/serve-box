@@ -107,6 +107,9 @@ interface Handlers {
 
 const etags = new Map<string, [Date, string]>();
 
+// In-memory shared text board (resets on server restart)
+let sharedBoard = '';
+
 const calculateSha = (
   handlers: Handlers,
   absolutePath: string,
@@ -764,6 +767,44 @@ export const handler = async (
     } else {
       response.statusCode = 400;
       response.end(JSON.stringify({ success: false, error: result.error }));
+    }
+    return;
+  }
+
+  // Handle shared board - GET
+  if (request.method === 'GET' && request.url === '/__board') {
+    response.setHeader('Content-Type', 'application/json');
+    response.statusCode = 200;
+    response.end(JSON.stringify({ content: sharedBoard }));
+    return;
+  }
+
+  // Handle shared board - POST
+  if (request.method === 'POST' && request.url === '/__board') {
+    const chunks: Buffer[] = [];
+    for await (const chunk of request) {
+      chunks.push(chunk as Buffer);
+    }
+    try {
+      const body = JSON.parse(Buffer.concat(chunks).toString('utf-8')) as {
+        content?: string;
+      };
+      if (typeof body.content === 'string') {
+        sharedBoard = body.content;
+        response.setHeader('Content-Type', 'application/json');
+        response.statusCode = 200;
+        response.end(JSON.stringify({ success: true }));
+      } else {
+        response.setHeader('Content-Type', 'application/json');
+        response.statusCode = 400;
+        response.end(
+          JSON.stringify({ success: false, error: 'Invalid content' }),
+        );
+      }
+    } catch {
+      response.setHeader('Content-Type', 'application/json');
+      response.statusCode = 400;
+      response.end(JSON.stringify({ success: false, error: 'Invalid JSON' }));
     }
     return;
   }

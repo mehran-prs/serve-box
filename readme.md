@@ -1,6 +1,4 @@
-![Serve-Box Logo](./media/banner.png)
-
----
+### Serve Box
 
 `serve-box` helps you serve a static site, single page application or just a static file (no matter if on your device or on the local network). It also supports **file uploads**, allowing users to upload files to the server. Additionally, it provides a neat interface for listing the directory's contents:
 
@@ -42,6 +40,7 @@ Now you understand how the package works! :tada:
 - **File uploads**: Upload files directly to the server via the web interface
 - **Directory listing**: Browse directory contents with a clean UI
 - **Local network sharing**: Easily share files on your local network
+- **Authentication**: Authenticate via HTTP basic authentication
 
 ## Configuration
 
